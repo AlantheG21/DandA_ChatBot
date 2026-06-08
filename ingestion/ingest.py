@@ -51,7 +51,7 @@ async def main():
 
     # Step 3: Embed and store in Pinecone
     print("[3/3] Embedding and storing in Pinecone...")
-    await embed_and_store(chunks)
+    embed_and_store(chunks)
     print("Ingestion complete!")
 
 if __name__ == "__main__":
