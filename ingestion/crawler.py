@@ -19,12 +19,17 @@ async def crawl_site(urls: list[str]) -> list[dict]:
     run_cfg = CrawlerRunConfig(
         markdown_generator=DefaultMarkdownGenerator(
             options={
-                "ignore_links": False,
+                "ignore_links": True,
                 "ignore_images": True,
             }
         ),
-        excluded_selector="#4efeffee, #032686a6, #9777987f",
-        wait_for="body",
+        word_count_threshold=5,
+        scan_full_page=True,
+        target_elements=[".dmNewParagraph", ".faq-item", ".listWidgetContainer"],
+        excluded_tags=["nav", "footer", "header"],
+        exclude_external_links=True,
+        exclude_social_media_links=True,
+        flatten_shadow_dom=True,
         page_timeout=15000,
     )
 
@@ -40,8 +45,8 @@ async def crawl_site(urls: list[str]) -> list[dict]:
                     print(f"      [WARN] Failed to crawl {url}: {result.error_message}")
                     continue
 
-                raw = result.markdown.raw_markdown
-                content = re.sub(r'\[([^\]]*)\]\([^\)]*\)', r'\1', raw)
+                content = result.markdown.raw_markdown
+                # content = re.sub(r'\[([^\]]*)\]\([^\)]*\)', r'\1', raw)
 
                 title = result.metadata.get("title", url)
  
@@ -54,6 +59,8 @@ async def crawl_site(urls: list[str]) -> list[dict]:
                     "title": title,
                     "content": content,
                 })
+
+                #print(documents[0]["content"])
 
             except Exception as e:
                 print(f"      [ERROR] {url}: {e}")
