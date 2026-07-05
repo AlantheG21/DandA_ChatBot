@@ -9,7 +9,7 @@ Each page becomes one Document dict:
 """
 
 import asyncio
-from unittest import result
+import re
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig
 from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
 
@@ -23,6 +23,7 @@ async def crawl_site(urls: list[str]) -> list[dict]:
                 "ignore_images": True,
             }
         ),
+        excluded_selector="#4efeffee, #032686a6, #9777987f",
         wait_for="body",
         page_timeout=15000,
     )
@@ -39,7 +40,9 @@ async def crawl_site(urls: list[str]) -> list[dict]:
                     print(f"      [WARN] Failed to crawl {url}: {result.error_message}")
                     continue
 
-                content = result.markdown.raw_markdown  # clean markdown content
+                raw = result.markdown.raw_markdown
+                content = re.sub(r'\[([^\]]*)\]\([^\)]*\)', r'\1', raw)
+
                 title = result.metadata.get("title", url)
  
                 if len(content.strip()) < 100:
