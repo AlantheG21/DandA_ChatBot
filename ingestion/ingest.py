@@ -22,7 +22,6 @@ TARGET_URL = "https://dandaautoglass.com/"
 
 # Pages to crawl (can be modified to include more or fewer pages)
 PAGES_TO_CRAWL = [
-    TARGET_URL,
     f"{TARGET_URL}adas-recalibration/",
     f"{TARGET_URL}auto-glass-repair/",
     f"{TARGET_URL}auto-glass-replacement/",
@@ -33,8 +32,6 @@ PAGES_TO_CRAWL = [
     f"{TARGET_URL}quarter-glass-repair/",
     f"{TARGET_URL}sunroof-glass-replacement/",
     f"{TARGET_URL}vent-glass-repair/",
-    f"{TARGET_URL}reviews/",
-    f"{TARGET_URL}faqs/",
     f"{TARGET_URL}serving-area/",
 ]
 
