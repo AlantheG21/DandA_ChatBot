@@ -1,2 +1,22 @@
+# Environment
 .env
-*/__pycache__/
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.next/
+
+# Vite
+frontend/dist/
+
+# Misc
+.DS_Store
