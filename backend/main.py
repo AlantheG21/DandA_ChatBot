@@ -9,7 +9,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://danda-chatbot.vercel.app"],
+    allow_origins=["https://dand-a-chat-bot.vercel.app"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
