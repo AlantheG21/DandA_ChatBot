@@ -1,0 +1,38 @@
+name: Ingest site content
+
+on:
+  schedule:
+    # Quarterly, 00:00 UTC on the 1st of Jan/Apr/Jul/Oct.
+    # The site changes ~once a year, so this is just a safety-net cadence —
+    # use the "Run workflow" button (workflow_dispatch) whenever you know
+    # the site changed and don't want to wait for the next scheduled run.
+    - cron: "0 0 1 */3 *"
+  workflow_dispatch:
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: ingestion
+        run: pip install -r requirements.txt
+
+      - name: Install crawl4ai browser
+        working-directory: ingestion
+        run: crawl4ai-setup
+
+      - name: Run ingestion
+        working-directory: ingestion
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+          PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
+        run: python ingest.py
