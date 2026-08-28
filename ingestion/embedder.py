@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from pinecone import Pinecone
+from pinecone.exceptions import NotFoundException
 
 load_dotenv()
 
@@ -13,7 +14,17 @@ def embed_and_store(chunks: list[dict]) -> int:
     openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-    index = pc.Index(os.getenv("PINECONE_INDEX_NAME"))
+
+    # Clear all existing vectors first so a run that produces fewer chunks
+    # than a previous run can't leave orphaned, stale vectors behind.
+    try:
+        index_host = pc.describe_index(os.getenv("PINECONE_INDEX_NAME"))["host"]
+        index = pc.Index(host=index_host)
+        index.delete(delete_all=True)
+    except NotFoundException as e:
+        raise RuntimeError(
+            f"Pinecone index '{os.getenv('PINECONE_INDEX_NAME')}' not found — was it deleted?"
+        ) from e
 
     total_upserted = 0
 
